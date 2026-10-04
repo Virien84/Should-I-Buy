@@ -11,12 +11,12 @@ const EXTRACT_SCHEMA = {
   required: ["is_product_page", "product_name", "price", "currency"],
 };
 
-const EXTRACT_PROMPT = `Analizas el texto de una página web. Decide si es la página de UN producto concreto que se puede comprar (no un listado, buscador, carrito, artículo o portada).
-Si lo es, devuelve su nombre corto y el precio actual de venta (el precio final que pagaría, no el tachado ni el precio por unidad ni el de envío) y la moneda en código ISO (EUR, USD, GBP...).
-Si no lo es, devuelve is_product_page=false, product_name="", price=0, currency="".
-Responde solo con JSON.`;
+const EXTRACT_PROMPT = `You analyse the text of a web page. Decide whether it is the page of ONE specific product that can be bought (not a listing, search results, cart, article or home page).
+If it is, return its short name, its current selling price (the final price the buyer would pay, not the crossed-out price, the unit price or the shipping cost) and the currency as an ISO code (EUR, USD, GBP...).
+If it is not, return is_product_page=false, product_name="", price=0, currency="".
+Answer with JSON only.`;
 
-const cache = new Map(); // url -> producto extraído
+const cache = new Map(); // url -> extracted product
 
 async function getSettings() {
   const { settings } = await chrome.storage.local.get("settings");
@@ -41,7 +41,7 @@ async function ollamaChat(settings, messages, format) {
       ...(format ? { format } : {}),
     }),
   });
-  if (!res.ok) throw new Error(`Ollama respondió ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`Ollama returned ${res.status}: ${await res.text()}`);
   const data = await res.json();
   return data.message.content;
 }
@@ -49,7 +49,7 @@ async function ollamaChat(settings, messages, format) {
 async function extractProduct(settings, page) {
   if (cache.has(page.url)) return cache.get(page.url);
 
-  // Atajo: si la tienda publica datos estructurados limpios, no hace falta preguntar al modelo.
+  // Shortcut: if the shop publishes clean structured data, there's no need to ask the model.
   const h = page.structured;
   let product;
   if (h && h.price > 0 && h.name) {
@@ -59,7 +59,7 @@ async function extractProduct(settings, page) {
       settings,
       [
         { role: "system", content: EXTRACT_PROMPT },
-        { role: "user", content: `URL: ${page.url}\nTítulo: ${page.title}\nPistas: ${JSON.stringify(page.hints)}\n\nTexto:\n${page.text}` },
+        { role: "user", content: `URL: ${page.url}\nTitle: ${page.title}\nHints: ${JSON.stringify(page.hints)}\n\nText:\n${page.text}` },
       ],
       EXTRACT_SCHEMA
     );
@@ -69,38 +69,38 @@ async function extractProduct(settings, page) {
   return product;
 }
 
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
 function describe(result, settings) {
   const m = (n) => money(n, settings.currency);
   const lines = [];
-  if (result.verdict === "green") {
-    lines.push(`Te quedarían ${m(result.leftAfter)} para ${result.cycle.left} días (${m(result.perDayAfter)}/día).`);
-  } else if (result.verdict === "yellow") {
-    lines.push(`Te quedarían ${m(result.leftAfter)} para ${result.cycle.left} días (${m(result.perDayAfter)}/día).`);
-    if (result.waitDays) lines.push(`Si esperas ${result.waitDays} día${result.waitDays === 1 ? "" : "s"}, entra en tu ritmo de gasto.`);
+  if (result.verdict === "green" || result.verdict === "yellow") {
+    lines.push(`You'd have ${m(result.leftAfter)} left for ${plural(result.cycle.left, "day")} (${m(result.perDayAfter)}/day).`);
+    if (result.waitDays) lines.push(`Wait ${plural(result.waitDays, "day")} and it fits your spending pace.`);
   } else if (result.reason === "no-margin") {
-    lines.push("Tus gastos fijos y tu ahorro ya se comen todos tus ingresos.");
+    lines.push("Your fixed expenses and savings already take up all your income.");
   } else {
-    lines.push(`Este mes te quedan ${m(Math.max(result.remaining, 0))} libres.`);
+    lines.push(`You have ${m(Math.max(result.remaining, 0))} of free money left this month.`);
     lines.push(
       result.monthsHalf === result.monthsAll
-        ? `Podrías permitírtelo en ${result.monthsAll} mes${result.monthsAll === 1 ? "" : "es"} sin tocar tus ahorros.`
-        : `Sin tocar tus ahorros: ${result.monthsAll} mes${result.monthsAll === 1 ? "" : "es"} apartando todo tu dinero libre, o ${result.monthsHalf} apartando la mitad.`
+        ? `You could afford it in ${plural(result.monthsAll, "month")} without touching your savings.`
+        : `Without touching your savings: ${plural(result.monthsAll, "month")} putting aside all your free money, or ${result.monthsHalf} putting aside half.`
     );
   }
   return lines;
 }
 
 async function friendlyNote(settings, product, result, details) {
-  const who = settings.name ? `Hablas con ${settings.name}.` : "";
-  const verdictText = { green: "SÍ se lo puede permitir", yellow: "puede, pero le aprieta", red: "NO se lo puede permitir ahora" }[result.verdict];
+  const who = settings.name ? `You're talking to ${settings.name}.` : "";
+  const verdictText = { green: "CAN afford it", yellow: "can, but it's tight", red: "CANNOT afford it right now" }[result.verdict];
   return ollamaChat(settings, [
     {
       role: "system",
-      content: `Eres un amigo cercano, sincero y con humor que ayuda a llegar a fin de mes. ${who} Escribe UNA sola frase en español (máximo 25 palabras), sin sermones, tuteando. No inventes cifras: usa solo las que te doy.`,
+      content: `You are a close, honest and funny friend who helps people make it to the end of the month. ${who} Write ONE sentence in English (25 words max), casual, no lecturing. Don't make up numbers: use only the ones I give you.`,
     },
     {
       role: "user",
-      content: `Producto: ${product.product_name} (${money(product.price, settings.currency)}). Veredicto: ${verdictText}. Datos: ${details.join(" ")}`,
+      content: `Product: ${product.product_name} (${money(product.price, settings.currency)}). Verdict: ${verdictText}. Facts: ${details.join(" ")}`,
     },
   ]);
 }
@@ -123,7 +123,7 @@ async function analyze(page, tabId) {
     currencyMismatch: product.currency && product.currency.toUpperCase() !== settings.currency.toUpperCase(),
   };
 
-  // La frase del "amigo" llega después para no retrasar el semáforo.
+  // The friend's sentence arrives later so it doesn't hold up the traffic light.
   friendlyNote(settings, product, result, details)
     .then((note) => chrome.tabs.sendMessage(tabId, { type: "note", url: page.url, note: note.trim() }))
     .catch(() => {});
@@ -155,7 +155,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
-// Cargar el modelo en memoria al abrir el navegador: la primera respuesta en frío puede tardar más de un minuto.
+// Load the model into memory when the browser starts: a cold first answer can take over a minute.
 async function warmUp() {
   const settings = await getSettings();
   fetch(`${settings.ollamaUrl}/api/generate`, {

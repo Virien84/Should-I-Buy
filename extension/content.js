@@ -1,4 +1,4 @@
-// Se ejecuta en cada página. Solo despierta a la IA si la página "huele" a tienda.
+// Runs on every page. Only wakes the AI up if the page "smells" like a shop.
 (() => {
   const BUY_WORDS = /añadir al carrito|añadir a la cesta|comprar ahora|add to (cart|basket|bag)|buy now|in den warenkorb|ajouter au panier|aggiungi al carrello|adicionar ao carrinho/i;
   const PRICE_RE = /(\d{1,3}([.,\s]\d{3})*([.,]\d{2})?\s?(€|eur|\$|£))|((€|\$|£)\s?\d)/i;
@@ -51,9 +51,9 @@
     return { looksLikeShop, page: { url: location.href, title: document.title, structured, hints, text } };
   }
 
-  // ---------- Interfaz ----------
+  // ---------- UI ----------
   const COLORS = { green: "#1f9d55", yellow: "#d69e2e", red: "#e53e3e", thinking: "#718096" };
-  const TITLES = { green: "Te lo puedes permitir", yellow: "Puedes, pero te aprieta", red: "Ahora no" };
+  const TITLES = { green: "You can afford it", yellow: "You can, but it's tight", red: "Not now" };
   const EMOJI = { green: "🟢", yellow: "🟡", red: "🔴" };
 
   function ensureHost() {
@@ -77,7 +77,7 @@
         .actions button { flex: 1; border: 1px solid #cbd5e0; background: #f7fafc; border-radius: 8px; padding: 6px; cursor: pointer; font: inherit; }
         .ai { font-size: 11px; color: #a0aec0; margin-top: 8px; }
       </style>
-      <div class="card"><div class="bar"><span class="title"></span><button class="close" title="Cerrar">×</button></div><div class="body"></div></div>`;
+      <div class="card"><div class="bar"><span class="title"></span><button class="close" title="Close">×</button></div><div class="body"></div></div>`;
     shadow.querySelector(".close").onclick = remove;
     document.documentElement.appendChild(host);
     return shadow;
@@ -96,14 +96,14 @@
 
     if (state.status === "thinking") {
       bar.style.background = COLORS.thinking;
-      title.textContent = "🤔 Pensando…";
-      body.innerHTML = `<div class="product">Mirando el producto con la IA local</div>`;
+      title.textContent = "🤔 Thinking…";
+      body.innerHTML = `<div class="product">Looking at the product with your local AI</div>`;
       return;
     }
     if (state.status === "error") {
       bar.style.background = COLORS.thinking;
-      title.textContent = "Should I Buy no puede pensar";
-      body.innerHTML = `<p>¿Está Ollama encendido?</p><div class="ai"></div>`;
+      title.textContent = "Should I Buy can't think right now";
+      body.innerHTML = `<p>Is Ollama running?</p><div class="ai"></div>`;
       body.querySelector(".ai").textContent = state.error;
       return;
     }
@@ -116,7 +116,7 @@
       <div class="details"></div>
       <div class="note">…</div>
       <div class="warn" hidden></div>
-      <div class="actions"><button class="bought">Lo he comprado</button></div>
+      <div class="actions"><button class="bought">I bought it</button></div>
       <div class="ai"></div>`;
     body.querySelector(".product").textContent = state.product.product_name;
     body.querySelector(".price").textContent = state.priceText;
@@ -128,13 +128,13 @@
     if (state.currencyMismatch) {
       const w = body.querySelector(".warn");
       w.hidden = false;
-      w.textContent = `Ojo: la tienda muestra el precio en ${state.product.currency}.`;
+      w.textContent = `Heads up: this shop shows the price in ${state.product.currency}.`;
     }
     body.querySelector(".ai").textContent =
-      state.product.source === "ai" ? "Producto detectado por Gemma en tu ordenador" : "Precio leído de los datos de la tienda";
+      state.product.source === "ai" ? "Product spotted by Gemma on your computer" : "Price read from the shop's product data";
     body.querySelector(".bought").onclick = (e) => {
       chrome.runtime.sendMessage({ type: "bought", name: state.product.product_name, price: state.product.price, url: location.href });
-      e.target.textContent = "Apuntado ✔";
+      e.target.textContent = "Logged ✔";
       e.target.disabled = true;
     };
   }
@@ -159,12 +159,12 @@
     } catch (err) {
       res = { status: "error", error: String(err.message || err) };
     }
-    if (page.url !== location.href) return; // el usuario ya se fue a otra página
+    if (page.url !== location.href) return; // the user has already moved to another page
     if (res.status === "ok" || res.status === "error") render(res);
     else remove();
   }
 
-  // Las tiendas modernas cambian de página sin recargar: vigilamos la URL.
+  // Modern shops change pages without reloading: watch the URL.
   setTimeout(check, 1200);
   setInterval(check, 1500);
 })();

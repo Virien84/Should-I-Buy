@@ -10,7 +10,7 @@ async function render() {
   const el = $("content");
 
   if (!settings.income) {
-    el.innerHTML = `<p>Primero cuéntame tus números en la configuración.</p>`;
+    el.innerHTML = `<p>First, tell me your numbers in the settings.</p>`;
     return;
   }
 
@@ -21,11 +21,11 @@ async function render() {
   const color = used <= pace ? "#1f9d55" : used < 1 ? "#d69e2e" : "#e53e3e";
 
   el.innerHTML = `
-    <div class="row"><span>Dinero libre del mes</span><b>${m(s.free)}</b></div>
-    <div class="row"><span>Caprichos apuntados</span><b>${m(s.spent)}</b></div>
-    <div class="row"><span>Te queda</span><b>${m(s.remaining)}</b></div>
+    <div class="row"><span>Free money this month</span><b>${m(s.free)}</b></div>
+    <div class="row"><span>Purchases logged</span><b>${m(s.spent)}</b></div>
+    <div class="row"><span>Left</span><b>${m(s.remaining)}</b></div>
     <div class="meter"><div style="width:${used * 100}%;background:${color}"></div></div>
-    <div class="muted">Día ${s.cycle.elapsed} de ${s.cycle.days} hasta que cobres. A tu ritmo, hoy podrías llevar gastado ${m((s.free * pace))}.</div>
+    <div class="muted">Day ${s.cycle.elapsed} of ${s.cycle.days} until payday. At your pace, you could have spent ${m(s.free * pace)} by today.</div>
     <ul id="list"></ul>`;
 
   const current = purchases
@@ -36,7 +36,7 @@ async function render() {
     li.textContent = `${p.name} · ${m(p.price)} `;
     const del = document.createElement("button");
     del.textContent = "×";
-    del.title = "Quitar";
+    del.title = "Remove";
     del.onclick = async () => {
       purchases.splice(p.i, 1);
       await chrome.storage.local.set({ purchases });

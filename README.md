@@ -34,7 +34,7 @@ flowchart LR
 3. `budget.js` does the maths. The AI does **not** do this part, because it has to be exact:
    - Free money = income − fixed expenses − savings.
    - Spending pace: your free money is "earned" day by day from payday. On day 3 you haven't earned as much as on day 28.
-   - The **Lo he comprado** ("I bought it") button logs the purchase and subtracts it from the month.
+   - The **I bought it** button logs the purchase and subtracts it from the month.
 4. Gemma also writes a short, honest sentence, the way a friend would say it.
 
 ### Installation
@@ -80,7 +80,7 @@ Por eso la IA es [Gemma 3](https://ollama.com/library/gemma3) corriendo en local
 3. `budget.js` hace las cuentas. Esto **no** lo hace la IA, porque tienen que ser exactas:
    - Dinero libre = ingresos − gastos fijos − ahorro.
    - Ritmo de gasto: el dinero libre se "gana" día a día desde que cobras. El día 3 no te has ganado lo mismo que el día 28.
-   - Con el botón **Lo he comprado** apuntas el gasto y se resta del mes.
+   - Con el botón **I bought it** apuntas el gasto y se resta del mes.
 4. Gemma escribe además una frase corta y sincera, como lo diría un amigo.
 
 ### Instalación
