@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>FinDeMes · Configuración</title>
+  <style>
+    body { font: 15px/1.5 system-ui, sans-serif; max-width: 520px; margin: 40px auto; padding: 0 16px; color: #1a202c; }
+    h1 { margin-bottom: 4px; }
+    .sub { color: #4a5568; margin-top: 0; }
+    label { display: block; margin-top: 14px; font-weight: 600; }
+    small { display: block; font-weight: 400; color: #718096; }
+    input, select { width: 100%; padding: 8px; font: inherit; border: 1px solid #cbd5e0; border-radius: 8px; box-sizing: border-box; margin-top: 4px; }
+    .free { margin-top: 18px; padding: 12px; border-radius: 10px; background: #f0fff4; }
+    button { margin-top: 18px; padding: 10px 18px; font: inherit; border: 0; border-radius: 8px; background: #2b6cb0; color: #fff; cursor: pointer; }
+    button.secondary { background: #e2e8f0; color: #1a202c; }
+    #status, #ollama { margin-left: 10px; }
+    details { margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <h1>FinDeMes 💸</h1>
+  <p class="sub">Tus números se quedan en este ordenador. Nada se envía a ningún servidor.</p>
+
+  <label>¿Cómo te llamas? <small>Opcional, para que el aviso te hable a ti.</small>
+    <input id="name" type="text"></label>
+  <label>Ingresos netos al mes
+    <input id="income" type="number" min="0" step="0.01"></label>
+  <label>Gastos fijos al mes <small>Alquiler, facturas, transporte, suscripciones…</small>
+    <input id="fixed" type="number" min="0" step="0.01"></label>
+  <label>Ahorro al mes <small>Lo que quieres apartar sí o sí. Pon 0 si no ahorras.</small>
+    <input id="savings" type="number" min="0" step="0.01"></label>
+  <label>Día del mes en que cobras
+    <input id="payday" type="number" min="1" max="28"></label>
+  <label>Moneda
+    <select id="currency"><option>EUR</option><option>USD</option><option>GBP</option><option>MXN</option><option>ARS</option><option>COP</option><option>CLP</option></select></label>
+
+  <div class="free" id="free"></div>
+
+  <details>
+    <summary>IA local (Ollama)</summary>
+    <label>Modelo <input id="model" type="text"></label>
+    <label>Dirección de Ollama <input id="ollamaUrl" type="text"></label>
+    <button class="secondary" id="test">Probar conexión</button><span id="ollama"></span>
+  </details>
+
+  <button id="save">Guardar</button><span id="status"></span>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

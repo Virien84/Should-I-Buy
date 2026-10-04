@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "FinDeMes",
+  "version": "0.1.0",
+  "description": "¿Me lo puedo permitir? Un semáforo para cada producto que miras, con IA que corre en tu ordenador.",
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost:11434/*", "http://127.0.0.1:11434/*"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "FinDeMes"
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
