@@ -12,6 +12,16 @@
 
 I built it for a friend who never makes it to the end of the month.
 
+### Screenshots
+
+| 🟢 You can afford it | 🟡 You can, but it's tight | 🔴 Not now |
+|---|---|---|
+| ![Green verdict on Amazon](screenshots/green-verdict.jpg) | ![Yellow verdict on the demo shop](screenshots/yellow-verdict.jpg) | ![Red verdict on Amazon](screenshots/red-verdict.jpg) |
+
+| Thinking… | Settings |
+|---|---|
+| ![Thinking badge while Gemma reads the page](screenshots/red-thinking.jpg) | ![Settings page](screenshots/settings.jpg) |
+
 ### Why open, local AI
 
 Should I Buy sees **every shop you visit** and knows **your income, your expenses and your savings**. That data shouldn't leave your computer.
@@ -67,6 +77,8 @@ MIT
 - 🔴 **Ahora no**: te dice en cuántos meses podrías comprarlo sin tocar tus ahorros.
 
 La hice para un amigo que nunca llega a fin de mes.
+
+Las capturas están en la [sección en inglés](#screenshots).
 
 ### Por qué IA abierta y local
 
