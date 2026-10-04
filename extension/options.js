@@ -16,8 +16,8 @@ function showFree() {
   const free = s.income - s.fixed - s.savings;
   $("free").textContent =
     free > 0
-      ? `Te quedan ${money(free, s.currency)} libres al mes para el día a día y los caprichos.`
-      : "Con estos números no te queda dinero libre al mes.";
+      ? `You have ${money(free, s.currency)} free each month for day-to-day spending and treats.`
+      : "With these numbers you have no free money left each month.";
   $("free").style.background = free > 0 ? "#f0fff4" : "#fff5f5";
 }
 
@@ -29,19 +29,19 @@ for (const f of FIELDS) $(f).addEventListener("input", showFree);
 
 $("save").onclick = async () => {
   await chrome.storage.local.set({ settings: read() });
-  $("status").textContent = "Guardado ✔";
+  $("status").textContent = "Saved ✔";
   setTimeout(() => ($("status").textContent = ""), 2000);
 };
 
 $("test").onclick = async () => {
   await chrome.storage.local.set({ settings: read() });
-  $("ollama").textContent = "Probando…";
+  $("ollama").textContent = "Testing…";
   const res = await chrome.runtime.sendMessage({ type: "ping-ollama" });
   if (!res.ok) {
-    $("ollama").textContent = `No conecta: ${res.error}`;
+    $("ollama").textContent = `Cannot connect: ${res.error}`;
   } else if (!res.models.some((m) => m === read().model || m === `${read().model}:latest`)) {
-    $("ollama").textContent = `Conecta, pero falta el modelo. Ejecuta: ollama pull ${read().model}`;
+    $("ollama").textContent = `Connected, but the model is missing. Run: ollama pull ${read().model}`;
   } else {
-    $("ollama").textContent = "Todo listo ✔";
+    $("ollama").textContent = "All set ✔";
   }
 };

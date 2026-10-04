@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "FinDeMes",
+  "name": "Should I Buy",
   "version": "0.1.0",
-  "description": "¿Me lo puedo permitir? Un semáforo para cada producto que miras, con IA que corre en tu ordenador.",
+  "description": "Can I afford it? A traffic light for every product you look at, powered by AI that runs on your own computer.",
   "permissions": ["storage"],
   "host_permissions": ["http://localhost:11434/*", "http://127.0.0.1:11434/*"],
   "background": {
@@ -18,7 +18,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "FinDeMes"
+    "default_title": "Should I Buy"
   },
   "options_page": "options.html",
   "icons": {

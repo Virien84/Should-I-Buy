@@ -102,7 +102,7 @@
     }
     if (state.status === "error") {
       bar.style.background = COLORS.thinking;
-      title.textContent = "FinDeMes no puede pensar";
+      title.textContent = "Should I Buy no puede pensar";
       body.innerHTML = `<p>¿Está Ollama encendido?</p><div class="ai"></div>`;
       body.querySelector(".ai").textContent = state.error;
       return;

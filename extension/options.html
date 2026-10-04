@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>FinDeMes · Configuración</title>
+  <title>Should I Buy · Settings</title>
   <style>
     body { font: 15px/1.5 system-ui, sans-serif; max-width: 520px; margin: 40px auto; padding: 0 16px; color: #1a202c; }
     h1 { margin-bottom: 4px; }
@@ -18,32 +18,32 @@
   </style>
 </head>
 <body>
-  <h1>FinDeMes 💸</h1>
-  <p class="sub">Tus números se quedan en este ordenador. Nada se envía a ningún servidor.</p>
+  <h1>Should I Buy 💸</h1>
+  <p class="sub">Your numbers stay on this computer. Nothing is sent to any server.</p>
 
-  <label>¿Cómo te llamas? <small>Opcional, para que el aviso te hable a ti.</small>
+  <label>What's your name? <small>Optional, so the tips talk to you.</small>
     <input id="name" type="text"></label>
-  <label>Ingresos netos al mes
+  <label>Monthly net income
     <input id="income" type="number" min="0" step="0.01"></label>
-  <label>Gastos fijos al mes <small>Alquiler, facturas, transporte, suscripciones…</small>
+  <label>Monthly fixed expenses <small>Rent, bills, transport, subscriptions…</small>
     <input id="fixed" type="number" min="0" step="0.01"></label>
-  <label>Ahorro al mes <small>Lo que quieres apartar sí o sí. Pon 0 si no ahorras.</small>
+  <label>Monthly savings <small>What you want to put aside no matter what. Enter 0 if you don't save.</small>
     <input id="savings" type="number" min="0" step="0.01"></label>
-  <label>Día del mes en que cobras
+  <label>Payday (day of the month)
     <input id="payday" type="number" min="1" max="28"></label>
-  <label>Moneda
+  <label>Currency
     <select id="currency"><option>EUR</option><option>USD</option><option>GBP</option><option>MXN</option><option>ARS</option><option>COP</option><option>CLP</option></select></label>
 
   <div class="free" id="free"></div>
 
   <details>
-    <summary>IA local (Ollama)</summary>
-    <label>Modelo <input id="model" type="text"></label>
-    <label>Dirección de Ollama <input id="ollamaUrl" type="text"></label>
-    <button class="secondary" id="test">Probar conexión</button><span id="ollama"></span>
+    <summary>Local AI (Ollama)</summary>
+    <label>Model <input id="model" type="text"></label>
+    <label>Ollama address <input id="ollamaUrl" type="text"></label>
+    <button class="secondary" id="test">Test connection</button><span id="ollama"></span>
   </details>
 
-  <button id="save">Guardar</button><span id="status"></span>
+  <button id="save">Save</button><span id="status"></span>
 
   <script type="module" src="options.js"></script>
 </body>
